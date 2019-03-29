@@ -1,11 +1,16 @@
 ## Smart-Pointer
-本文实现了一个简单的智能指针类，智能指针比较常用的有`shared_ptr`,`unique_ptr`,`scope_ptr`,这里打算实现一个简单的`shared_ptr`。
-本文会从头到尾，由浅至深的分析实现一个简单的`shared_ptr`类，并且会在最后，简单的剖析`std::shared_ptr`的主要实现，以加深对智能指针的深入理解。
-
-### 引言
+#### 引言
 在C/C++的编程中，内存管理是一个盛产BUG的重灾区，主要体现在：
 * `new` 和 `delete` 需要成对出现，依赖于人要记得做的事情，人总是可能忘记去做，或者后续的模块维护者会忘记这一点。
 * 当发生异常的时候，可能无法执行到释放内存的代码。
+
+本文实现了一个简单的智能指针类，智能指针比较常用的有`shared_ptr`,`unique_ptr`,`scope_ptr`,这里打算实现一个简单的`shared_ptr`。
+
+本文会从头到尾，由浅至深的分析实现一个简单的`shared_ptr`类，并且会在最后，简单的剖析`std::shared_ptr`的主要实现，以加深对智能指针的深入理解。
+
+本文实现的智能指针的特点：
+* 管理的类需要继承自RefBase的基类，通过这个基类的m_count引用计数，管理的对象的生命期。
+* 线程非安全，未来可进一步改进为线程安全。
 
 #### 基本思路
 * 对象在离开作用域的时候会自动销毁，此时会调用析构函数。
@@ -60,6 +65,40 @@ SmartPointer& operator = (const SmartPointer& other)
     return *this;
 }
 ```
+
+7) 使SmartPointer类变得pointer-like：
+需要重载 `*` 和 `->` ，这个很容易实现
+```cpp
+T& operator* () const { return *m_pointer; }
+
+T* operator-> () const { return m_pointer; }
+```
+
+8）比较和判空
+在使用指针的过程中，有时候需要对指针的有效性进行判断，有时候又需要比较两个指针是否指向同一块内存空间。
+* 针对第一个问题：可以使用`重载转型至bool()`的运算符
+```cpp
+operator bool() const {
+    return mPointer != NULL;
+}
+```
+注意以上和 `重载()`的区别。
+
+但是如果这样做了，
+```cpp
+if (sp1 == sp3)
+```
+sp1和sp3首先会转化成bool类型，然后比较，那么就无法通过重载==来实现 比较两个指针是否指向同一块内存空间这样的一个功能了。
+
+因此，决定重载 == 和 != 来满足以上要求
+
+
+9）测试：可以通过`g++ test.cpp -o test -std=c++11`来进行测试。
+
+### 分析std::shared_ptr
+
+
+
 
 
 
