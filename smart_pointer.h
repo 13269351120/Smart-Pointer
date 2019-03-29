@@ -4,7 +4,7 @@
 #include "ref_base.h"
 
 template <typename T>
-class SmartPonter
+class SmartPointer
 {
     public:
         SmartPointer() : m_pointer(nullptr) { } 
@@ -14,7 +14,7 @@ class SmartPonter
             if(m_pointer) m_pointer->incRefCount();
         }
 
-        SmartPointer(const SmartPoint& other) : m_pointer(other.m_pointer)
+        SmartPointer(const SmartPointer& other) : m_pointer(other.m_pointer)
         {
             if(m_pointer) m_pointer->incRefCount();
         }
@@ -25,14 +25,14 @@ class SmartPonter
 
             if(tmp) tmp->incRefCount();
 
-            if(m_pointer && m_pointer->decRefCount() == 0) 
-                delete m_pointer;
-            
+            if(m_pointer && m_pointer->decRefCount() == 0) {
+                 delete m_pointer;
+            }
             m_pointer = tmp;
             return *this;
         }
 
-        ~SmartPonter()
+        ~SmartPointer()
         {
             if(m_pointer && m_pointer->decRefCount() == 0) 
                 delete m_pointer;
@@ -40,6 +40,6 @@ class SmartPonter
 
     private:
         T *m_pointer;
-} //class SmartPointer;
+}; //class SmartPointer;
 
 #endif

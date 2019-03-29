@@ -23,6 +23,6 @@ class RefBase
     private:
         int m_count;        
 
-}// class RefBase;
+};// class RefBase;
 
 #endif
