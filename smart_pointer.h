@@ -25,7 +25,7 @@ class SmartPointer
         {
             if(m_pointer) m_pointer->incRefCount();
         }
-
+        //这里没有判断自我赋值也可以正常运行
         SmartPointer& operator = (const SmartPointer& other)
         {
             T* tmp = other.m_pointer;
@@ -64,9 +64,10 @@ class SmartPointer
             return m_pointer != other.m_pointer;
         }
         */
+        //使用宏来简化代码
         COMPARE (==);
         COMPARE (!=);
-
+        //在虚构函数中尝试根据引用计数决定是否销毁
         ~SmartPointer()
         {
             if(m_pointer && m_pointer->decRefCount() == 0) 
