@@ -130,13 +130,17 @@ cout << *pString << endl;                      // wrong, pString = nullptr !
 
 也正是由于这个原因，不能用于STL容器，STL容器是`值语义`的，需要元素支持拷贝。
 
-### 分析std::scope_ptr
-scope_ptr可以认为是 auto_ptr 的非copy版本，它把`拷贝构造`和`赋值运算符`都设置成了`private`，这样至少把错误提前到了`编译期`。
-所以scope_ptr也不能放入STL容器。
+### 分析boost::scope_ptr和std::uniq_ptr
+`scope_ptr` 和 `uniq_ptr`可以认为是 `auto_ptr` 的非copy版本，它把`拷贝构造`和`赋值运算符`都设置成了`private`，这样至少把auto_ptr那种运行期错误提前到了`编译期`。
+所以scope_ptr也不能放入STL容器。其实现相对而言简单。
 
 ---
 ### 分析std::shared_ptr
-这个是分析的重点，
+这个是分析的重点，前面提到的几个智能指针在语义上是`移动语义`，和STL容器的兼容性不好，这里shared_ptr提供了`拷贝语义`，允许多个智能指针指向同一块内存，其中的关键技术是：引用计数。
+详细分析见CSDN上大佬的分析：https://blog.csdn.net/ithiker/article/details/51532484
+未完待续。
+
+
 
 
 
